@@ -104,12 +104,8 @@ What is inside the zip depends on when I interrupt. At `How many students?` it h
 
 ## How I tested it
 
-- After each deploy I ran `ls -R attendance_tracker_<name>` and checked the layout above.
-- I used `cat` on assets.csv and config.json for both roster options. Copy mode keeps the 4-session counts and `total_sessions` 5. Generate mode ends every row in `0,0` and `total_sessions` is 1.
-- I checked `ls -l` for the executable Python file and `-rw-------` on config.json, including after a threshold update.
-- I tried bad input: a count of `abc`, an empty project name, a count above 10, `abc` and 60/70 as thresholds, and a project name that already exists.
 - I ran a marking session with some students absent, checked both logs appeared in reports/, then archived them.
 - I interrupted a deploy with Ctrl+C and Ctrl+Z and checked the zip and the missing folder.
-- I ran it on macOS and on the Ubuntu 20.04 sandbox.
-
+- I ran it on macOS
+  
 [![Watch the video](https://loom.com)](https://www.loom.com/share/8faa0a4e70354d219e379044c0fb2fff)
