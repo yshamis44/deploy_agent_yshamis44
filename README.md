@@ -112,6 +112,4 @@ What is inside the zip depends on when I interrupt. At `How many students?` it h
 - I interrupted a deploy with Ctrl+C and Ctrl+Z and checked the zip and the missing folder.
 - I ran it on macOS and on the Ubuntu 20.04 sandbox.
 
-## Video
-
-<add https://www.loom.com/share/8faa0a4e70354d219e379044c0fb2fff>
+[![Watch the video](https://loom.com)](https://www.loom.com/share/8faa0a4e70354d219e379044c0fb2fff)
