@@ -59,7 +59,36 @@ make_roster() {
     esac
     echo "Roster written: $csv"
 }
+update_thresholds() {
+    read -r -p "Update alert thresholds? (y/n) " ans
+    if [ "$ans" != "y" ]; then
+        return
+    fi
 
+    read -r -p "Warning threshold [75]: " warn
+    read -r -p "Failure threshold [50]: " fail
+    warn=${warn:-75}
+    fail=${fail:-50}
+
+    for v in "$warn" "$fail"; do
+        case "$v" in
+            *[!0-9]*|????*) echo "'$v' is not a valid number, thresholds unchanged."; return ;;
+        esac
+    done
+
+    warn=$((10#$warn))
+    fail=$((10#$fail))
+    if [ "$warn" -gt 100 ] || [ "$fail" -ge "$warn" ]; then
+        echo "Failure must be lower than warning, and warning at most 100. Thresholds unchanged."
+        return
+    fi
+
+    cfg="$dir/Helpers/config.json"
+    sed -i.bak "s/\"warning\": [0-9]*/\"warning\": $warn/" "$cfg"
+    sed -i.bak "s/\"failure\": [0-9]*/\"failure\": $fail/" "$cfg"
+    rm "$cfg.bak"
+    echo "Thresholds set: warning=$warn failure=$fail"
+}
 deploy() {
     read -r -p "Project name: " name
     if [ -z "$name" ]; then
@@ -89,7 +118,7 @@ deploy() {
     chmod 600 "$dir/Helpers/config.json"
     echo "Permissions set:"
     ls -l "$dir/attendance_checker.py" "$dir/Helpers/config.json"
-
+    update_thresholds
     echo "Created $dir"
 
 }
