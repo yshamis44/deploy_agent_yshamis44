@@ -89,6 +89,19 @@ update_thresholds() {
     rm "$cfg.bak"
     echo "Thresholds set: warning=$warn failure=$fail"
 }
+pick_project() {
+    read -r -p "Project name: " name
+    dir="attendance_tracker_$name"
+    if [ ! -d "$dir" ]; then
+        echo "$dir not found."
+        return 1
+    fi
+}
+
+start_app() {
+    (cd "$dir" && python3 attendance_checker.py)
+}
+
 deploy() {
     read -r -p "Project name: " name
     if [ -z "$name" ]; then
@@ -118,17 +131,31 @@ deploy() {
     chmod 600 "$dir/Helpers/config.json"
     echo "Permissions set:"
     ls -l "$dir/attendance_checker.py" "$dir/Helpers/config.json"
+    
     update_thresholds
+    start_app
     echo "Created $dir"
 
 }
 
 run_app() {
-    echo "run: not written yet"
+    pick_project && start_app
 }
 
 archive_logs() {
-    echo "archive: not written yet"
+    pick_project || return
+    ts=$(date +%Y%m%d_%H%M%S)
+    mkdir -p "$dir/archives/attendance" "$dir/archives/absent"
+
+    for kind in attendance absent; do
+        log="$dir/reports/$kind.log"
+        if [ -f "$log" ]; then
+            cp "$log" "$dir/archives/$kind/${kind}_$ts.log"
+            echo "Archived $log -> $dir/archives/$kind/${kind}_$ts.log"
+        else
+            echo "No $kind.log to archive, skipping."
+        fi
+    done
 }
 
 check_tools
