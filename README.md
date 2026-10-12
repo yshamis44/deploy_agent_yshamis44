@@ -114,4 +114,4 @@ What is inside the zip depends on when I interrupt. At `How many students?` it h
 
 ## Video
 
-<add link here>
+<add https://www.loom.com/share/8faa0a4e70354d219e379044c0fb2fff>
