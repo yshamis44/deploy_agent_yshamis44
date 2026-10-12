@@ -102,7 +102,21 @@ start_app() {
     (cd "$dir" && python3 attendance_checker.py)
 }
 
+interrupted() {
+    echo
+    echo "Deployment interrupted."
+    if [ "$made" = "yes" ] && [ -d "$dir" ]; then
+        zip -rq "${dir}_archive.zip" "$dir"
+        rm -rf "$dir"
+        echo "Saved what was built to ${dir}_archive.zip and removed $dir"
+    else
+        echo "Nothing had been created yet."
+    fi
+    exit 1
+}
+
 deploy() {
+    made=""
     read -r -p "Project name: " name
     if [ -z "$name" ]; then
         echo "Name can't be empty."
@@ -120,6 +134,7 @@ deploy() {
     fi
 
         mkdir -p "$dir/Helpers" "$dir/reports"
+        made="yes"
     cp templates/attendance_checker.py "$dir/"
     cp templates/config.json "$dir/Helpers/"
     if ! make_roster; then
@@ -133,6 +148,7 @@ deploy() {
     ls -l "$dir/attendance_checker.py" "$dir/Helpers/config.json"
     
     update_thresholds
+    trap - INT TSTP
     start_app
     echo "Created $dir"
 
@@ -167,7 +183,9 @@ echo "4) Quit"
 read -r -p "Pick one: " choice
 
 case "$choice" in
-    1) deploy ;;
+    1) trap interrupted INT TSTP
+       deploy
+       trap - INT TSTP ;;
     2) run_app ;;
     3) archive_logs ;;
     4) exit 0 ;;
