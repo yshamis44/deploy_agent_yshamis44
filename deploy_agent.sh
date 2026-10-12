@@ -12,7 +12,26 @@ check_tools() {
 }
 
 deploy() {
-    echo "deploy: not written yet"
+    read -r -p "Project name: " name
+    if [ -z "$name" ]; then
+        echo "Name can't be empty."
+        return
+    fi
+    dir="attendance_tracker_$name"
+
+    if [ -d "$dir" ]; then
+        read -r -p "$dir already exists. Overwrite? (y/n) " ans
+        if [ "$ans" != "y" ]; then
+            echo "Aborted, nothing changed."
+            return
+        fi
+        rm -rf "$dir"
+    fi
+
+    mkdir -p "$dir/Helpers" "$dir/reports"
+    cp templates/attendance_checker.py "$dir/"
+    cp templates/config.json "$dir/Helpers/"
+    echo "Created $dir"
 }
 
 run_app() {
