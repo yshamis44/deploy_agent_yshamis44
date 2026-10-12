@@ -84,7 +84,12 @@ deploy() {
         rm -rf "$dir"
         echo "Roster failed, removed $dir"
         return
-    fi
+    fi    
+    chmod +x "$dir/attendance_checker.py"
+    chmod 600 "$dir/Helpers/config.json"
+    echo "Permissions set:"
+    ls -l "$dir/attendance_checker.py" "$dir/Helpers/config.json"
+
     echo "Created $dir"
 
 }
